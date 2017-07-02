@@ -26,8 +26,12 @@ def start_chat(spy) :
             send_message(location)
         elif menu_choice == 4:
             print'read a message'
+            decode_message()
+
         elif menu_choice == 5:
             print'read old chats'
+            location = select_friend()
+            read_message(location)
         elif menu_choice == 6:
             print 'quitting'
         else:
@@ -191,6 +195,26 @@ def send_message(index):
     temp_friend={
         'chats':[]
     }
+    date=datetime.now()
+    dated=date.strftime("%a, %d %b %Y %H:%M")
+    text=Steganography.decode(output)
     temp_friend=friends[index]
-    temp_friend['chats'].append(output)
+    temp_friend['chats'].append(dated+'   '+text)
+
+
     print 'the message has been sent to ',temp_friend['name']
+def read_message(index):
+    temp_friend={
+        'name':'',
+        'chats':''
+    }
+    temp_friend=friends[index]
+    print ' the conversation with %s is '%(temp_friend['name'])
+    for temp in temp_friend['chats']:
+                print temp,'\n'
+def decode_message():
+    output=raw_input('enter the path of the image you want to decode ')
+    text=Steganography.decode(output)
+    print 'the secret message is ', text
+
+    #index=select_friend()
