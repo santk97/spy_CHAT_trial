@@ -6,9 +6,10 @@ from steganography.steganography import Steganography
 status_list=[]
 
 #start_chat method to display menu and work according to the choice of the user
+
 def start_chat(spy) :
     status=None
-    print 'Welcome ', spy['name']
+    print 'Welcome ', spy.name
     menu_choice = 1
     while menu_choice != 6:
         #the main menu for the user
@@ -21,15 +22,14 @@ def start_chat(spy) :
             friend_list()
 
         elif menu_choice == 3:
-            print 'send a message '
+
             location=select_friend()
             send_message(location)
         elif menu_choice == 4:
-            print'read a message'
+
             decode_message()
 
         elif menu_choice == 5:
-            print'read old chats'
             location = select_friend()
             read_message(location)
         elif menu_choice == 6:
@@ -133,7 +133,7 @@ def friend_list():
         ,'age':'',
         'rating':'',
         'is_online':'True',
-        'chats':[]
+        'chats':{'message':[],'date':[],'sent_by_me':False}
     }
 
     print 'Friend List \n You have ',len(friends),' friends'
@@ -155,7 +155,7 @@ def add_friend():
             'age':'',
              'rating':'',
             'is_online':'True',
-            'chats':[]
+            'chats':{'message':[],'date':[],'sent_by_me':False}
         }
         print 'Add the details of the friend'
         while len(new_friend['name'])==0:
@@ -177,7 +177,7 @@ def select_friend():
         'name': ''
         , 'age': '',
         'rating': '',
-        'chats':[]
+        'chats':{'message':[],'date':[],'sent_by_me':False}
     }
 
     i = 1
@@ -193,25 +193,34 @@ def send_message(index):
     output='output.jpg'
     Steganography.encode(input,output,text)
     temp_friend={
-        'chats':[]
+        'chats':{'message':[],'sent_by_me':False,'date':[]}
     }
     date=datetime.now()
     dated=date.strftime("%a, %d %b %Y %H:%M")
     text=Steganography.decode(output)
     temp_friend=friends[index]
-    temp_friend['chats'].append(dated+'   '+text)
-
-
+    temp_friend['chats']['sent_by_me']=True
+    temp_friend['chats']['message'].append(text)
+    temp_friend['chats']['date'].append(dated)
     print 'the message has been sent to ',temp_friend['name']
 def read_message(index):
     temp_friend={
         'name':'',
-        'chats':''
+        'chats': {'message': [], 'sent_by_me': '','date':[]}
     }
     temp_friend=friends[index]
     print ' the conversation with %s is '%(temp_friend['name'])
-    for temp in temp_friend['chats']:
-                print temp,'\n'
+    if temp_friend['chats']['sent_by_me']==True:
+        i=0
+        for temp in temp_friend['chats']['message']:
+                print temp_friend['chats']['date'][i],'You said: ',temp,'\n'
+                i=i+1
+
+    else :
+        i = 0
+        for temp in temp_friend['chats']['message']:
+            print temp_friend['chats']['date'][i],'You said:', temp, '\n'
+            i = i + 1
 def decode_message():
     output=raw_input('enter the path of the image you want to decode ')
     text=Steganography.decode(output)
